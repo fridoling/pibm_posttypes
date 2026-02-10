@@ -1,0 +1,1 @@
+(()=>{"use strict";const i=window.wp.blocks,e=window.wp.blockEditor,o=window.ReactJSXRuntime;(0,i.registerBlockType)("pibm/jobs",{title:"Jobs",icon:"id",category:"widgets",edit:()=>(0,o.jsx)("div",{...(0,e.useBlockProps)(),style:{padding:"0.5rem",fontStyle:"italic"},children:"Jobs Block Preview"}),save:()=>null})})();

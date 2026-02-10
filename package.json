@@ -1,0 +1,17 @@
+{
+  "name": "pibm_posttypes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+  "build": "wp-scripts build src/single-member.js src/member-gallery.js src/institution-gallery.js src/single-job.js src/open-jobs-list.js src/news-list.js src/jobs.js --output-path=build",
+  "start": "wp-scripts start src/single-member.js src/member-gallery.js src/institution-gallery.js src/single-job.js src/open-jobs-list.js src/news-list.js src/jobs.js --output-path=build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@wordpress/scripts": "^30.27.0"
+  }
+}
