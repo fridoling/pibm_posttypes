@@ -322,12 +322,12 @@ function pibm_register_newsletter_cpt() {
 }
 add_action('init', 'pibm_register_newsletter_cpt', 50);
 
-add_action('admin_head', function() {
-    global $post;
-    if ($post && $post->post_type === 'newsletter') {
-        echo '<style>#titlediv { display:none; }</style>';
-    }
-});
+// add_action('admin_head', function() {
+//     global $post;
+//     if ($post && $post->post_type === 'newsletter') {
+//         echo '<style>#titlediv { display:none; }</style>';
+//     }
+// });
 
 add_action('init', function() {
     $obj = get_post_type_object('newsletter');
@@ -414,16 +414,16 @@ function newsletter_files_metabox_html($post) {
     <?php
 }
 
-add_action('add_meta_boxes', function() {
-    add_meta_box(
-        'newsletter_date_meta',
-        'Newsletter Date',
-        'newsletter_date_meta_callback',
-        'newsletter',
-        'side',
-        'high'
-    );
-});
+// add_action('add_meta_boxes', function() {
+//     add_meta_box(
+//         'newsletter_date_meta',
+//         'Newsletter Date',
+//         'newsletter_date_meta_callback',
+//         'newsletter',
+//         'side',
+//         'high'
+//     );
+// });
 
 function newsletter_date_meta_callback($post) {
     $year  = get_post_meta($post->ID, 'newsletter_year', true) ?: date('Y');
@@ -445,53 +445,6 @@ function newsletter_date_meta_callback($post) {
     </select>
     <?php
 }
-
-add_action('save_post_newsletter', function($post_id) {
-
-
-});
-
-add_action('save_post_newsletter', function($post_id, $post, $update) {
-
-
-    // 1. Avoid autosave / revision loops
-    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
-        return;
-    }
-
-    // 2. Prevent infinite loop
-    static $is_saving = false;
-    if ($is_saving) return;
-    $is_saving = true;
-
-    // 3. Load meta
-    $year  = get_post_meta($post_id, 'newsletter_year', true);
-    $month = get_post_meta($post_id, 'newsletter_month', true);
-
-    if ($year && $month) {
-        $new_title = 'Newsletter ' . date('F', mktime(0,0,0,$month,1)) . ' ' . $year;
-
-        // Only update if different (prevents unnecessary recursion)
-        if ($post->post_title !== $new_title) {
-            wp_update_post([
-                'ID'         => $post_id,
-                'post_title' => $new_title,
-                'post_name'  => sanitize_title($new_title),
-            ]);
-        }
-    }
-
-    if (isset($_POST['newsletter_year'])) {
-        update_post_meta($post_id, 'newsletter_year', intval($_POST['newsletter_year']));
-    }
-
-    if (isset($_POST['newsletter_month'])) {
-        update_post_meta($post_id, 'newsletter_month', intval($_POST['newsletter_month']));
-    }
-
-
-}, 10, 3);
-
 
 add_action('init', function() {
 
@@ -627,23 +580,10 @@ add_shortcode('newsletter_archive', function() {
     $query = new WP_Query([
         'post_type'      => 'newsletter',
         'posts_per_page' => -1,
-
-        // Sort by meta fields
-        'orderby' => [
-            'year'  => 'DESC',
-            'month' => 'DESC',
-        ],
-        'meta_query' => [
-            'year' => [
-                'key'   => 'newsletter_year',
-                'type'  => 'NUMERIC',
-            ],
-            'month' => [
-                'key'   => 'newsletter_month',
-                'type'  => 'NUMERIC',
-            ],
-        ],
+        'orderby'        => 'date',
+        'order'          => 'DESC',
     ]);
+
 
     ob_start();
 
@@ -658,8 +598,8 @@ add_shortcode('newsletter_archive', function() {
     while ($query->have_posts()) {
         $query->the_post();
 
-        $year  = get_post_meta(get_the_ID(), 'newsletter_year', true);
-        $month = get_post_meta(get_the_ID(), 'newsletter_month', true);
+        $month = get_the_date('F');   // e.g. March
+        $year  = get_the_date('Y');   // e.g. 2026
 
         if (!$year) { continue; }
 
