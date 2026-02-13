@@ -45,13 +45,26 @@ function pibm_render_single_job($attributes) {
         <div class="job-description">
             <?php echo wp_kses_post($desc); ?>
         </div>
-
         <ul class="job-meta">
-            <?php if ($location) : ?><li><strong>Location:</strong> <span><?php echo esc_html($location); ?></span></li><?php endif; ?>
-            <?php if ($start) : ?><li><strong>Start:</strong> <span><?php echo esc_html($start); ?></span></li><?php endif; ?>
-            <?php if ($deadline) : ?><li><strong>Deadline:</strong> <span><?php echo esc_html($deadline); ?></span></li><?php endif; ?>
+            <?php if ($location) : ?>
+                <li>
+                    <strong>Location:</strong>
+                    <span><?php echo esc_html($location); ?></span>
+                </li>
+            <?php endif; ?>
+            <?php if ($deadline) : ?>
+                <li>
+                    <strong>Deadline:</strong>
+                    <span><?php echo date("F j, Y", strtotime($deadline)); ?></span>
+                </li>
+            <?php endif; ?>
+            <?php if ($start) : ?>
+                <li>
+                    <strong>Start:</strong>
+                    <span><?php echo date("F j, Y", strtotime($start)); ?></span>
+                </li>
+            <?php endif; ?>            
         </ul>
-
     </div>
     <?php
     return ob_get_clean();

@@ -48,7 +48,7 @@ function pibm_render_jobs($attributes) {
     <div class="pibm-jobs-list">
 
         <?php foreach ($jobs as $job) :
-
+            $location = get_post_meta($job->ID, 'job_location', true);
             $deadline = get_post_meta($job->ID, 'job_deadline', true);
             $start    = get_post_meta($job->ID, 'job_start_date', true);
 
@@ -65,30 +65,36 @@ function pibm_render_jobs($attributes) {
                         <?php echo esc_html($job->post_title); ?>
                     </a>
                 </h3>
-
-                <div class="job-meta">
-                    <?php if ($start) : ?>
-                        <span><strong>Start:</strong> <?php echo esc_html($start); ?></span>
-                    <?php endif; ?>
-
-                    <?php if ($deadline) : ?>
-                        <span><strong>Deadline:</strong> <?php echo esc_html($deadline); ?></span>
-                    <?php endif; ?>
-
-                    <span><strong>Posted:</strong>
-                        <?php echo esc_html(get_the_date('', $job)); ?>
-                    </span>
+                <div class="job-post-date">
+                    Posted on <?php echo esc_html(get_the_date('F d, Y', $job)); ?>
                 </div>
-
-                <p class="job-excerpt">
+                <div class="job-excerpt">
                     <?php echo esc_html($excerpt); ?>
-                </p>
-
+                </div>
+                <ul class="job-meta">
+                    <?php if ($location) : ?>
+                        <li>
+                            <strong>Location:</strong>
+                            <span><?php echo esc_html($location); ?></span>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($deadline) : ?>
+                        <li>
+                            <strong>Deadline:</strong>
+                            <span><?php echo date("F j, Y", strtotime($deadline)); ?></span>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($start) : ?>
+                        <li>
+                            <strong>Start:</strong>
+                            <span><?php echo date("F j, Y", strtotime($start)); ?></span>
+                        </li>
+                    <?php endif; ?>            
+                </ul>      
                 <a class="job-read-more"
                    href="<?php echo esc_url(get_permalink($job->ID)); ?>">
                     Read more →
                 </a>
-
             </article>
 
         <?php endforeach; ?>

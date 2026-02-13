@@ -661,8 +661,7 @@ add_action('init', function() {
         'job_deadline',
     ];
 
-    foreach ($fields as $key) {
-        register_post_meta('job', $key, [
+    register_post_meta('job', 'job_location', [
             'type' => 'string',
             'single' => true,
             'show_in_rest' => false,   // classic editor
@@ -670,7 +669,36 @@ add_action('init', function() {
                 return current_user_can('edit_posts');
             },
         ]);
-    }
+
+    register_post_meta('job', 'job_start_date', [
+        'type' => 'date',
+        'single' => true,
+        'show_in_rest' => false,   // classic editor
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+
+    register_post_meta('job', 'job_deadline', [
+        'type' => 'DateTime',
+        'single' => true,
+        'show_in_rest' => false,   // classic editor
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+
+
+    // foreach ($fields as $key) {
+    //     register_post_meta('job', $key, [
+    //         'type' => 'string',
+    //         'single' => true,
+    //         'show_in_rest' => false,   // classic editor
+    //         'auth_callback' => function() {
+    //             return current_user_can('edit_posts');
+    //         },
+    //     ]);
+    // }
 });
 
 add_action('add_meta_boxes', function() {

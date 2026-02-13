@@ -55,7 +55,7 @@ function pibm_render_open_jobs_list($attr) {
                     </a>
 
                     <?php if ($location) : ?>
-                        <div class="widget-info">
+                        <div class="widget-text">
                             <?php echo esc_html($location); ?>
                         </div>
                     <?php endif; ?>
