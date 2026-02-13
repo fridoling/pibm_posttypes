@@ -62,7 +62,7 @@ function pibm_render_news_block($attributes) {
                     <?php echo $title; ?>
                 </a>
                 <div class="widget-info">
-                <?php echo "By ".esc_html(get_the_author($item)).", posted on ".esc_html(get_the_date('F d, Y', $item)); ?>
+                <?php echo "By ".esc_html(get_the_author_meta('display_name', get_post_field('post_author', $item))).", posted on ".esc_html(get_the_date('F d, Y', $item)); ?>
                 </div>
                 <div class="widget-text">
                 <?php echo $extra; ?>
