@@ -18,7 +18,7 @@ add_action('init', function () {
         'attributes'      => [
             'count' => [
                 'type'    => 'number',
-                'default' => 5
+                'default' => 10
             ]
         ]
     ]);
@@ -26,14 +26,14 @@ add_action('init', function () {
 
 function pibm_render_news_block($attributes) {
 
-    $count = $attributes['count'] ?? 5;
+    $count = $attributes['count'] ?? 10;
 
     $items = get_posts([
         'post_type'      => ['post', 'newsletter'],
         'post_status'    => 'publish',
         'posts_per_page' => $count,
         'orderby'        => 'date',
-        'order'          => 'ASC'
+        'order'          => 'DESC'
     ]);
 
     ob_start();
@@ -53,13 +53,18 @@ function pibm_render_news_block($attributes) {
             <li>
             <?php
             if ($type === 'post') {
-                $words = wp_trim_words(strip_tags($item->post_content), 10);
-                $extra = '<div class="widget-info">'.esc_html($words).'</div>';
+                $author = esc_html(get_the_author($item));
+                // $date = get_post_time($item);
+                $words = wp_trim_words(strip_tags($item->post_content), 25);
+                $extra = esc_html($words);
                 ?>
                 <a class="widget-title" href="<?php echo esc_url($url); ?>">
                     <?php echo $title; ?>
                 </a>
                 <div class="widget-info">
+                <?php echo "By ".$author.", posted on ".get_the_date( 'M d, Y' ); ?>
+                </div>
+                <div class="widget-text">
                 <?php echo $extra; ?>
                 </div>
             <?php
@@ -69,7 +74,7 @@ function pibm_render_news_block($attributes) {
                 <a class="widget-title" href="<?php echo esc_url($url); ?>">
                 <?php echo $title . ' is out!'; ?>
                 </a>
-                <div class="widget-info">
+                <div class="widget-text">
                     Check out what's new in the PhilInBioMed world.
                 </div>
             <?php
