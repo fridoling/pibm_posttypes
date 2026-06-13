@@ -24,6 +24,58 @@ require_once __DIR__ . '/includes/register-news-list-block.php';
 require_once __DIR__ . '/includes/register-jobs-block.php';
 
 /**
+ * Add a metabox for post expiry date
+ */
+function pibm_add_post_expiry_metabox() {
+    add_meta_box(
+        'pibm_post_expiry',
+        'Post Expiry Date',
+        'pibm_render_post_expiry_metabox',
+        'post', // 👈 applies to normal posts
+        'side',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'pibm_add_post_expiry_metabox');
+
+/**
+ * Render the metabox form
+ */
+function pibm_render_post_expiry_metabox($post) {
+    $value = get_post_meta($post->ID, '_expiry_date', true);
+
+    wp_nonce_field('pibm_save_post_expiry', 'pibm_post_expiry_nonce');
+
+    echo '<label for="pibm_expiry_date">Expiry Date:</label>';
+    echo '<input type="date" id="pibm_expiry_date" name="pibm_expiry_date" value="' . esc_attr($value) . '" style="width:100%;" />';
+}
+
+/**
+ * Save the post expiry date
+ */
+function pibm_save_post_expiry($post_id) {
+
+    if (!isset($_POST['pibm_post_expiry_nonce']) ||
+        !wp_verify_nonce($_POST['pibm_post_expiry_nonce'], 'pibm_save_post_expiry')) {
+        return;
+    }
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+
+    if (!current_user_can('edit_post', $post_id)) return;
+
+    if (isset($_POST['pibm_expiry_date'])) {
+        update_post_meta(
+            $post_id,
+            '_expiry_date',
+            sanitize_text_field($_POST['pibm_expiry_date'])
+        );
+    }
+}
+add_action('save_post', 'pibm_save_post_expiry');
+
+
+/**
  * Register 'member' Custom Post Type
  */
 function pibm_register_member_cpt() {
@@ -970,9 +1022,23 @@ add_shortcode('landing_post_slider', function ($atts) {
     $colors = ['bg-1', 'bg-2', 'bg-3'];
     $color_index = 0;
 
+    $today = date('Y-m-d');
+
     $query = new WP_Query([
         'post_type' => 'post',
-        'posts_per_page' => 6
+        'meta_query' => [
+            'relation' => 'OR',
+            [
+                'key' => '_expiry_date',
+                'compare' => 'NOT EXISTS'
+            ],
+            [
+                'key' => '_expiry_date',
+                'value' => $today,
+                'compare' => '>=',
+                'type' => 'DATE'
+            ]
+        ]
     ]);
 
     if (!$query->have_posts()) return '';
