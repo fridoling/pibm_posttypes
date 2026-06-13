@@ -64,12 +64,15 @@ function pibm_save_post_expiry($post_id) {
 
     if (!current_user_can('edit_post', $post_id)) return;
 
-    if (isset($_POST['pibm_expiry_date'])) {
+
+    if (isset($_POST['pibm_expiry_date']) && $_POST['pibm_expiry_date'] !== '') {
         update_post_meta(
             $post_id,
             '_expiry_date',
             sanitize_text_field($_POST['pibm_expiry_date'])
-        );
+    );
+    } else {
+        delete_post_meta($post_id, '_expiry_date'); // ✅ key truly does not exist
     }
 }
 add_action('save_post', 'pibm_save_post_expiry');
