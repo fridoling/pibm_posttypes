@@ -35,7 +35,7 @@ registerBlockType('myplugin/member-gallery', {
               value={count}
               onChange={(val) => setAttributes({ count: val })}
               min={1}
-              max={20}
+              max={200}
             />
             <SelectControl
               label="Category"
